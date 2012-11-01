@@ -1,0 +1,9 @@
+<resources>
+
+    <string name="app_name">Telefónicas</string>
+    <string name="title_activity_main">Telefónicas</string>
+    <string name="saldo_default">Telefónicas</string>
+    <string name="internet_total">Internet Total</string>
+    <string name="prestamo">Prestamo</string>
+
+</resources>
