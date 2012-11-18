@@ -6,22 +6,20 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.telephony.SmsManager;
+import android.telephony.TelephonyManager;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.Window;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import com.zomwi.telefonicas.util.Constants;
+
 public class MainActivity extends Activity {
 
-	private ImageButton botonOk;
 	private TextView textoSaldo;
-	private ImageButton botonPrestamo;
-	private ImageButton botonInternetTotal;
 
 	// Constants
 	String SMS_ENVIADO = "SMS_ENVIADO";
@@ -34,22 +32,37 @@ public class MainActivity extends Activity {
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.activity_main);
 
-		Typeface font = Typeface.createFromAsset(getAssets(),
-				"fonts/roboto_thin.ttf");
 		textoSaldo = (TextView) findViewById(R.id.textoSaldo);
-		textoSaldo.setTypeface(font);
-		textoSaldo.setTextSize(50f);
+
+		TelephonyManager telephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+		if (telephonyManager.getSimState() == TelephonyManager.SIM_STATE_READY) {
+			String x = "";
+			switch (Integer.parseInt(telephonyManager.getSimOperator())) {
+			case Constants.ENTEL_CODE:
+				x = "Entel";
+				break;
+			case Constants.VIVA_CODE:
+				x = "Viva";
+				break;
+			case Constants.TIGO_CODE:
+				x = "Tigo";
+				break;
+
+			default:
+				x = "Desconocido";
+			}
+			textoSaldo.setText(x);
+		}
+
+		// Typeface font = Typeface.createFromAsset(getAssets(),
+		// "fonts/roboto_thin.ttf");
+		//
+		// textoSaldo.setTypeface(font);
+		// textoSaldo.setTextSize(50f);
 		if (getIntent().getExtras() != null) {
 			textoSaldo.setText(getIntent().getStringExtra("saldo"));
 		}
 
-		botonOk = (ImageButton) findViewById(R.id.imageButtonSaldo);
-		botonOk.setOnClickListener(new OnClickListener() {
-
-			public void onClick(View v) {
-				enviarSMS("174", "saldo");
-			}
-		});
 		/*
 		 * SMSReceiver = new BroadcastReceiver() {
 		 * 
@@ -62,30 +75,6 @@ public class MainActivity extends Activity {
 		 * remitente + "\n\n" + cuerpo, Toast.LENGTH_LONG).show(); } };
 		 * registerReceiver(SMSReceiver, new IntentFilter("SMS"));
 		 */
-
-		botonPrestamo = (ImageButton) findViewById(R.id.imageButtonPrestar);
-		botonPrestamo.setOnClickListener(new OnClickListener() {
-
-			public void onClick(View v) {
-				// Intent intent = new Intent(Intent.ACTION_CALL);
-				String encodedHash = Uri.encode("#");
-				String ussd = "*" + "222" + encodedHash;
-				startActivityForResult(
-						new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + ussd)),
-						1);
-
-			}
-		});
-
-		botonInternetTotal = (ImageButton) findViewById(R.id.imageButtonInternet);
-		botonInternetTotal.setOnClickListener(new OnClickListener() {
-
-			public void onClick(View v) {
-				enviarSMS("5599", "si");
-
-			}
-		});
-
 	}
 
 	protected void enviarSMS(String numeroTelefonico, String mensaje) {
@@ -145,6 +134,28 @@ public class MainActivity extends Activity {
 		smsManager.sendTextMessage(numeroTelefonico, null, mensaje,
 				pendingIntentEnviado, pendingIntentEntregado);
 
+	}
+
+	public void requestInternet(View view) {
+		enviarSMS("5599", "si");
+	}
+
+	public void requestCredit(View view) {
+		enviarSMS("174", "saldo");
+	}
+
+	public void requestLoan(View view) {
+		String encodedHash = Uri.encode("#");
+		String ussd = "*" + "222" + encodedHash;
+		startActivityForResult(
+				new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + ussd)), 1);
+	}
+
+	public void requestCredit2(View view) {
+		String encodedHash = Uri.encode("#");
+		String ussd = "*" + "123" + encodedHash;
+		startActivityForResult(
+				new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + ussd)), 1);
 	}
 
 }

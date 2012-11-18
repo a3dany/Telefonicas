@@ -5,5 +5,11 @@
     <string name="saldo_default">Telefónicas</string>
     <string name="internet_total">Internet Total</string>
     <string name="prestamo">Prestamo</string>
+    
+    <!-- Acciones -->
+    <string name="internet">Internet</string>
+    <string name="residue">Saldo</string>
+    <string name="lend">Prestar</string>
+    
 
 </resources>
